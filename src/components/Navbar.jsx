@@ -7,7 +7,7 @@ export default function Navbar() {
         mellemrum<span>.</span>
       </NavLink>
       <div className="nav-links">
-        <NavLink to="/">Events</NavLink>
+        <NavLink to="/">Eventssss</NavLink>
         <NavLink to="/om">Om Mellemrum</NavLink>
       </div>
     </nav>
