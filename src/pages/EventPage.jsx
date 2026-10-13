@@ -12,6 +12,7 @@ export default function EventPage() {
   const [pageMessage, setPageMessage] = useState("");
   const [formStatus, setFormStatus] = useState("idle");
   const [formMessage, setFormMessage] = useState("");
+  const formMessageId = "signup-message";
 
   useEffect(() => {
     let isCancelled = false;
@@ -81,42 +82,51 @@ export default function EventPage() {
 
   if (pageStatus === "loading") {
     return (
-      <main className="event-page">
-        <Link className="back-link" to="/">
-          ← Alle events
-        </Link>
-        <p className="message" role="status">
-          Henter event...
-        </p>
-      </main>
+      <>
+        <main className="event-page">
+          <Link className="back-link" to="/">
+            ← Alle events
+          </Link>
+          <p className="message" role="status">
+            Henter event...
+          </p>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   if (pageStatus === "error") {
     return (
-      <main className="event-page">
-        <Link className="back-link" to="/">
-          ← Alle events
-        </Link>
-        <section className="message error-message" role="alert">
-          <h1>Eventet kunne ikke hentes</h1>
-          <p>{pageMessage}</p>
-        </section>
-      </main>
+      <>
+        <main className="event-page">
+          <Link className="back-link" to="/">
+            ← Alle events
+          </Link>
+          <section className="message error-message" role="alert">
+            <h1>Eventet kunne ikke hentes</h1>
+            <p>{pageMessage}</p>
+          </section>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   if (pageStatus === "not-found") {
     return (
-      <main className="event-page">
-        <Link className="back-link" to="/">
-          ← Alle events
-        </Link>
-        <section className="message" role="status">
-          <h1>Eventet findes ikke</h1>
-          <p>Det event, du leder efter, er ikke tilgængeligt.</p>
-        </section>
-      </main>
+      <>
+        <main className="event-page">
+          <Link className="back-link" to="/">
+            ← Alle events
+          </Link>
+          <section className="message" role="status">
+            <h1>Eventet findes ikke</h1>
+            <p>Det event, du leder efter, er ikke tilgængeligt.</p>
+          </section>
+        </main>
+        <Footer />
+      </>
     );
   }
 
@@ -174,32 +184,50 @@ export default function EventPage() {
             <p>Udfyld formularen, så sender vi din tilmelding til arrangøren.</p>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} aria-busy={isSubmitting}>
             <label>
               Navn
               <input
+                autoComplete="name"
+                aria-describedby={formMessage ? formMessageId : undefined}
                 value={name}
-                onChange={(inputEvent) => setName(inputEvent.target.value)}
+                onChange={(inputEvent) => {
+                  setName(inputEvent.target.value);
+                  setFormStatus("idle");
+                  setFormMessage("");
+                }}
                 required
                 disabled={isSubmitting}
+                name="name"
               />
             </label>
             <label>
               E-mail
               <input
+                autoComplete="email"
+                aria-describedby={formMessage ? formMessageId : undefined}
                 type="email"
                 value={email}
-                onChange={(inputEvent) => setEmail(inputEvent.target.value)}
+                onChange={(inputEvent) => {
+                  setEmail(inputEvent.target.value);
+                  setFormStatus("idle");
+                  setFormMessage("");
+                }}
                 placeholder="dig@example.com"
                 required
                 disabled={isSubmitting}
+                name="email"
               />
             </label>
             <button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Sender..." : "Tilmeld mig"}
             </button>
             {formMessage && (
-              <p className={`form-message ${formStatus}`} role={formStatus === "error" ? "alert" : "status"}>
+              <p
+                className={`form-message ${formStatus}`}
+                id={formMessageId}
+                role={formStatus === "error" ? "alert" : "status"}
+              >
                 {formMessage}
               </p>
             )}
