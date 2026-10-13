@@ -28,7 +28,6 @@ export default function NotFoundPage() {
             </div>
             <div className="footer-link-group">
               <p className="footer-heading">For arrangører</p>
-              <Link to="/tilmeldinger">Se tilmeldinger</Link>
               <a href="mailto:hej@mellemrum.dk">Kontakt os</a>
             </div>
           </nav>

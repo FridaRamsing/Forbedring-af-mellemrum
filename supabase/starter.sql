@@ -30,8 +30,26 @@ create table if not exists public.registrations (
   "eventLocation" text
 );
 
+alter table public.events enable row level security;
+alter table public.registrations enable row level security;
+
+drop policy if exists "Allow public event reads" on public.events;
+create policy "Allow public event reads"
+  on public.events
+  for select
+  to anon
+  using (true);
+
+drop policy if exists "Allow public registration inserts" on public.registrations;
+create policy "Allow public registration inserts"
+  on public.registrations
+  for insert
+  to anon
+  with check (true);
+
 grant select on table public.events to anon;
-grant select, insert on table public.registrations to anon;
+grant insert on table public.registrations to anon;
+revoke select on table public.registrations from anon;
 grant usage, select on all sequences in schema public to anon;
 
 insert into public.events

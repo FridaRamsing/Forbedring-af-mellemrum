@@ -1,38 +1,126 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const headers = {
-  apikey: import.meta.env.VITE_SUPABASE_APIKEY,
-  "Content-Type": "application/json"
-};
+import { createRegistration, getEventById } from "../lib/supabase";
 
 export default function EventPage() {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [pageStatus, setPageStatus] = useState("loading");
+  const [pageMessage, setPageMessage] = useState("");
+  const [formStatus, setFormStatus] = useState("idle");
+  const [formMessage, setFormMessage] = useState("");
 
   useEffect(() => {
-    async function getEvent() {
-      const response = await fetch(`${SUPABASE_URL}/events?id=eq.${eventId}`, { headers });
-      const data = await response.json();
-      setEvent(data[0]);
+    let isCancelled = false;
+
+    async function loadEvent() {
+      setPageStatus("loading");
+      setPageMessage("");
+
+      try {
+        const data = await getEventById(eventId);
+
+        if (!isCancelled) {
+          setEvent(data);
+          setPageStatus(data ? "ready" : "not-found");
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          setPageMessage(error.message);
+          setPageStatus("error");
+        }
+      }
     }
 
-    getEvent();
+    loadEvent();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [eventId]);
 
   async function handleSubmit(eventSubmit) {
     eventSubmit.preventDefault();
-    console.log({ name, email, event: event.title });
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName || !trimmedEmail) {
+      setFormStatus("error");
+      setFormMessage("Udfyld både navn og e-mail.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setFormStatus("error");
+      setFormMessage("Skriv en gyldig e-mailadresse.");
+      return;
+    }
+
+    setFormStatus("loading");
+    setFormMessage("");
+
+    try {
+      await createRegistration(event, {
+        name: trimmedName,
+        email: trimmedEmail
+      });
+
+      setName("");
+      setEmail("");
+      setFormStatus("success");
+      setFormMessage("Din tilmelding er modtaget.");
+    } catch (error) {
+      setFormStatus("error");
+      setFormMessage(`Tilmeldingen kunne ikke gemmes. ${error.message}`);
+    }
   }
 
-  if (!event) {
-    return null;
+  if (pageStatus === "loading") {
+    return (
+      <main className="event-page">
+        <Link className="back-link" to="/">
+          ← Alle events
+        </Link>
+        <p className="message" role="status">
+          Henter event...
+        </p>
+      </main>
+    );
+  }
+
+  if (pageStatus === "error") {
+    return (
+      <main className="event-page">
+        <Link className="back-link" to="/">
+          ← Alle events
+        </Link>
+        <section className="message error-message" role="alert">
+          <h1>Eventet kunne ikke hentes</h1>
+          <p>{pageMessage}</p>
+        </section>
+      </main>
+    );
+  }
+
+  if (pageStatus === "not-found") {
+    return (
+      <main className="event-page">
+        <Link className="back-link" to="/">
+          ← Alle events
+        </Link>
+        <section className="message" role="status">
+          <h1>Eventet findes ikke</h1>
+          <p>Det event, du leder efter, er ikke tilgængeligt.</p>
+        </section>
+      </main>
+    );
   }
 
   const date = new Date(event.date);
+  const isSubmitting = formStatus === "loading";
 
   return (
     <>
@@ -86,15 +174,32 @@ export default function EventPage() {
           <form onSubmit={handleSubmit}>
             <label>
               Navn
-              <input value={name} onChange={(inputEvent) => setName(inputEvent.target.value)} />
+              <input
+                value={name}
+                onChange={(inputEvent) => setName(inputEvent.target.value)}
+                required
+                disabled={isSubmitting}
+              />
             </label>
-            <span>E-mail</span>
-            <input
-              value={email}
-              onChange={(inputEvent) => setEmail(inputEvent.target.value)}
-              placeholder="dig@example.com"
-            />
-            <button type="submit">Tilmeld mig</button>
+            <label>
+              E-mail
+              <input
+                type="email"
+                value={email}
+                onChange={(inputEvent) => setEmail(inputEvent.target.value)}
+                placeholder="dig@example.com"
+                required
+                disabled={isSubmitting}
+              />
+            </label>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Sender..." : "Tilmeld mig"}
+            </button>
+            {formMessage && (
+              <p className={`form-message ${formStatus}`} role={formStatus === "error" ? "alert" : "status"}>
+                {formMessage}
+              </p>
+            )}
           </form>
         </section>
       </main>
@@ -114,7 +219,6 @@ export default function EventPage() {
             </div>
             <div className="footer-link-group">
               <p className="footer-heading">For arrangører</p>
-              <Link to="/tilmeldinger">Se tilmeldinger</Link>
               <a href="mailto:hej@mellemrum.dk">Kontakt os</a>
             </div>
           </nav>

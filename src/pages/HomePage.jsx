@@ -1,31 +1,44 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const headers = {
-  apikey: import.meta.env.VITE_SUPABASE_APIKEY,
-  "Content-Type": "application/json"
-};
+import { getEvents } from "../lib/supabase";
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Alle");
+  const [status, setStatus] = useState("loading");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    async function getEvents() {
-      const response = await fetch(`${SUPABASE_URL}/events?order=date.asc`, { headers });
-      const data = await response.json();
-      setEvents(data);
+    let isCancelled = false;
+
+    async function loadEvents() {
+      try {
+        const data = await getEvents();
+
+        if (!isCancelled) {
+          setEvents(data);
+          setStatus("ready");
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          setErrorMessage(error.message);
+          setStatus("error");
+        }
+      }
     }
 
-    getEvents();
+    loadEvents();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
-  const categories = ["Alle", ...new Set(events.map((event) => event.category))];
+  const categories = ["Alle", ...new Set(events.map((event) => event.category).filter(Boolean))];
 
   const filteredEvents = events.filter((event) => {
-    const searchText = `${event.title} ${event.summary} ${event.venueName}`.toLowerCase();
+    const searchText = `${event.title ?? ""} ${event.summary ?? ""} ${event.venueName ?? ""}`.toLowerCase();
     const matchesSearch = searchText.includes(search.toLowerCase());
     const matchesCategory = category === "Alle" || event.category === category;
 
@@ -85,25 +98,45 @@ export default function HomePage() {
           </label>
         </section>
 
-        <section className="event-grid">
-          {filteredEvents.map((event) => (
-            <article className="event-card" key={event.id}>
-              <img src={event.image} alt="" />
-              <div className="event-card-content">
-                <p className="event-category">{event.category}</p>
-                <h3>{event.title}</h3>
-                <p>{event.summary}</p>
-                <div className="event-meta">
-                  <span>{formatEventDate(event.date)}</span>
-                  <span>{event.venueName}</span>
+        {status === "loading" && (
+          <p className="message" role="status">
+            Henter events...
+          </p>
+        )}
+
+        {status === "error" && (
+          <p className="message error-message" role="alert">
+            Vi kunne ikke hente events lige nu. {errorMessage}
+          </p>
+        )}
+
+        {status === "ready" && filteredEvents.length === 0 && (
+          <p className="message" role="status">
+            Der er ingen events, der matcher din søgning.
+          </p>
+        )}
+
+        {status === "ready" && filteredEvents.length > 0 && (
+          <section className="event-grid">
+            {filteredEvents.map((event) => (
+              <article className="event-card" key={event.id}>
+                <img src={event.image} alt="" />
+                <div className="event-card-content">
+                  <p className="event-category">{event.category}</p>
+                  <h3>{event.title}</h3>
+                  <p>{event.summary}</p>
+                  <div className="event-meta">
+                    <span>{formatEventDate(event.date)}</span>
+                    <span>{event.venueName}</span>
+                  </div>
+                  <Link className="card-link" to={`/events/${event.id}`}>
+                    Læs mere
+                  </Link>
                 </div>
-                <Link className="card-link" to={`/events/${event.id}`}>
-                  Læs mere
-                </Link>
-              </div>
-            </article>
-          ))}
-        </section>
+              </article>
+            ))}
+          </section>
+        )}
       </main>
       <footer className="site-footer">
         <div className="footer-top">
@@ -121,7 +154,6 @@ export default function HomePage() {
             </div>
             <div className="footer-link-group">
               <p className="footer-heading">For arrangører</p>
-              <Link to="/tilmeldinger">Se tilmeldinger</Link>
               <a href="mailto:hej@mellemrum.dk">Kontakt os</a>
             </div>
           </nav>

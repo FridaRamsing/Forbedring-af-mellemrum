@@ -1,54 +1,24 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const headers = {
-  apikey: import.meta.env.VITE_SUPABASE_APIKEY,
-  "Content-Type": "application/json"
-};
-
 export default function RegistrationsPage() {
-  const [registrations, setRegistrations] = useState([]);
-  const [registrationCount, setRegistrationCount] = useState(0);
-
-  useEffect(() => {
-    async function getRegistrations() {
-      const response = await fetch(`${SUPABASE_URL}/registrations?order=createdAt.desc`, { headers });
-      const data = await response.json();
-      setRegistrations(data);
-      setRegistrationCount(data.length);
-    }
-
-    getRegistrations();
-  }, []);
-
   return (
     <>
       <header className="admin-header">
         <p className="eyebrow">Internt overblik</p>
         <h1>Tilmeldinger</h1>
-        <p>{registrationCount} tilmeldinger i alt</p>
+        <p>Persondata vises ikke i den offentlige app.</p>
       </header>
       <main>
-        <div className="registration-list">
-          <div className="registration-row registration-labels">
-            <span>Navn</span>
-            <span>Event</span>
-            <span>Dato</span>
-            <span>Status</span>
-          </div>
-          {registrations.map((registration) => (
-            <div className="registration-row" key={registration.id}>
-              <div>
-                <strong>{registration.name}</strong>
-                <small>{registration.email}</small>
-              </div>
-              <span>{registration.eventTitle}</span>
-              <span>{new Date(registration.eventDate).toLocaleDateString("da-DK")}</span>
-              <span className="status">{registration.status}</span>
-            </div>
-          ))}
-        </div>
+        <section className="message admin-notice">
+          <h2>Brug Supabase til det interne overblik</h2>
+          <p>
+            Tilmeldinger indeholder navne og e-mails. Derfor skal de ikke hentes i React med den offentlige
+            Supabase-nøgle. Se dem i Supabase Table Editor eller byg et rigtigt loginflow, før siden viser data igen.
+          </p>
+          <Link className="card-link" to="/">
+            Tilbage til events
+          </Link>
+        </section>
       </main>
       <footer className="site-footer">
         <div className="footer-top">
@@ -66,7 +36,6 @@ export default function RegistrationsPage() {
             </div>
             <div className="footer-link-group">
               <p className="footer-heading">For arrangører</p>
-              <Link to="/tilmeldinger">Se tilmeldinger</Link>
               <a href="mailto:hej@mellemrum.dk">Kontakt os</a>
             </div>
           </nav>

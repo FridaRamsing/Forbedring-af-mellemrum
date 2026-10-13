@@ -42,7 +42,7 @@ Hvis Supabase viser advarslen på billedet nedenfor, skal du vælge **Run withou
 
 ![Supabase-advarsel med knappen Run without RLS](docs/images/setup/run-without-rls.webp)
 
-Det er et bevidst scopevalg i Case 1: Authentication og authorization indgår ikke, og den interne side skal derfor ikke adgangsbeskyttes. Brug kun de udleverede eller andre fiktive testdata – aldrig rigtige personoplysninger.
+SQL-filen slår Row Level Security til. Offentlige brugere kan læse events og oprette tilmeldinger, men de kan ikke læse listen med tilmeldinger via den offentlige Supabase-nøgle. Brug kun de udleverede eller andre fiktive testdata, medmindre projektet senere får et rigtigt loginflow.
 
 SQL-filen opretter tabellerne `events` og `registrations` og indsætter de startdata, som appen forventer. Vent, til Supabase viser, at din query er gennemført.
 
@@ -109,9 +109,10 @@ Kontrollér, at:
 
 - forsiden viser events fra Supabase
 - du kan åbne en eventside
-- siden `/tilmeldinger` viser de eksisterende tilmeldinger
+- tilmeldingsformularen gemmer en ny tilmelding
+- siden `/tilmeldinger` ikke viser persondata i den offentlige frontend
 
-Tilmeldingsformularen logger foreløbig de indtastede værdier i konsollen. Den gemmer endnu ikke tilmeldingen i Supabase.
+Tilmeldingsformularen gemmer tilmeldingen i Supabase. Tilmeldingerne kan kontrolleres i Supabase Table Editor.
 
 ## 5. Deploy appen
 
@@ -142,7 +143,7 @@ Se den gennemgåede proces på Canvas: [Web App-forbedringer og teknisk fundamen
 - `/` – eventoversigt
 - `/events/:eventId` – eventdetalje og tilmelding
 - `/om` – om Mellemrum
-- `/tilmeldinger` – internt overblik
+- `/tilmeldinger` – sikkerhedsbesked for det interne overblik
 
 ## Arbejdsform
 
