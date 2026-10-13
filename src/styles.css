@@ -603,9 +603,14 @@ select:focus {
   overflow: hidden;
 }
 
-.event-detail > img {
+.event-detail-media {
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.event-detail-media img {
+  display: block;
   height: 100%;
-  min-height: 600px;
   object-fit: cover;
   width: 100%;
 }
@@ -800,8 +805,9 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
-  .event-detail > img {
-    min-height: 380px;
+  .event-detail-media {
+    aspect-ratio: 16 / 10;
+    min-height: 0;
   }
 
   .about-intro,
@@ -850,6 +856,10 @@ select:focus {
   .detail-list p {
     gap: 0.35rem;
     grid-template-columns: 1fr;
+  }
+
+  .event-detail-media {
+    max-height: 320px;
   }
 
   .about-header {
