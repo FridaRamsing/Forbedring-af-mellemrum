@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import Footer from "../components/Footer";
 import { createRegistration, getEventById } from "../lib/supabase";
 
 export default function EventPage() {
   const { eventId } = useParams();
-  const [event, setEvent] = useState(null);
+  const location = useLocation();
+  const navigationEvent = location.state?.event;
+  const matchingNavigationEvent = String(navigationEvent?.id) === eventId ? navigationEvent : null;
+  const [event, setEvent] = useState(matchingNavigationEvent);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [pageStatus, setPageStatus] = useState("loading");
+  const [pageStatus, setPageStatus] = useState(matchingNavigationEvent ? "ready" : "loading");
   const [pageMessage, setPageMessage] = useState("");
   const [formStatus, setFormStatus] = useState("idle");
   const [formMessage, setFormMessage] = useState("");
@@ -16,9 +19,17 @@ export default function EventPage() {
 
   useEffect(() => {
     let isCancelled = false;
+    const hasNavigationEvent = Boolean(matchingNavigationEvent);
 
     async function loadEvent() {
-      setPageStatus("loading");
+      if (hasNavigationEvent) {
+        setEvent(matchingNavigationEvent);
+        setPageStatus("ready");
+      } else {
+        setEvent(null);
+        setPageStatus("loading");
+      }
+
       setPageMessage("");
 
       try {
@@ -30,8 +41,10 @@ export default function EventPage() {
         }
       } catch (error) {
         if (!isCancelled) {
-          setPageMessage(error.message);
-          setPageStatus("error");
+          if (!hasNavigationEvent) {
+            setPageMessage(error.message);
+            setPageStatus("error");
+          }
         }
       }
     }
@@ -41,7 +54,7 @@ export default function EventPage() {
     return () => {
       isCancelled = true;
     };
-  }, [eventId]);
+  }, [eventId, matchingNavigationEvent]);
 
   async function handleSubmit(eventSubmit) {
     eventSubmit.preventDefault();
@@ -141,8 +154,21 @@ export default function EventPage() {
         </Link>
 
         <section className="event-detail">
-          <div className="event-detail-media">
-            <img src={event.image} alt={`Stemningsbillede for ${event.title}`} decoding="async" />
+          <div className="event-detail-visual">
+            <div className="event-detail-media">
+              <img
+                src={event.image}
+                alt={`Stemningsbillede for ${event.title}`}
+                decoding="async"
+                fetchPriority="high"
+                loading="eager"
+              />
+            </div>
+            <div className="event-detail-badges" aria-label="Eventoverblik">
+              {event.category && <span>{event.category}</span>}
+              <span>{event.price === 0 ? "Gratis" : `${event.price} kr.`}</span>
+              {event.venueCity && <span>{event.venueCity}</span>}
+            </div>
           </div>
           <div className="event-detail-content">
             <p className="event-category">{event.category}</p>
