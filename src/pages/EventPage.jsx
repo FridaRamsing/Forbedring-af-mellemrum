@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
+import Footer from "../components/Footer";
 import { createRegistration, getEventById } from "../lib/supabase";
 
 export default function EventPage() {
@@ -130,7 +131,7 @@ export default function EventPage() {
         </Link>
 
         <section className="event-detail">
-          <img src={event.image} alt="" />
+          <img src={event.image} alt={`Stemningsbillede for ${event.title}`} />
           <div className="event-detail-content">
             <p className="event-category">{event.category}</p>
             <h1>{event.title}</h1>
@@ -150,7 +151,9 @@ export default function EventPage() {
                   {event.venueWebsite && (
                     <>
                       <br />
-                      <a href={event.venueWebsite}>Besøg venue</a>
+                      <a href={event.venueWebsite} target="_blank" rel="noreferrer">
+                        Besøg venue
+                      </a>
                     </>
                   )}
                 </span>
@@ -203,31 +206,7 @@ export default function EventPage() {
           </form>
         </section>
       </main>
-      <footer className="site-footer">
-        <div className="footer-top">
-          <div className="footer-intro">
-            <p className="footer-brand">
-              mellemrum<span>.</span>
-            </p>
-            <p>Udvalgte kulturoplevelser og nye perspektiver på Aarhus.</p>
-          </div>
-          <nav className="footer-links" aria-label="Footer">
-            <div className="footer-link-group">
-              <p className="footer-heading">Udforsk</p>
-              <Link to="/">Events</Link>
-              <Link to="/om">Om Mellemrum</Link>
-            </div>
-            <div className="footer-link-group">
-              <p className="footer-heading">For arrangører</p>
-              <a href="mailto:hej@mellemrum.dk">Kontakt os</a>
-            </div>
-          </nav>
-        </div>
-        <div className="footer-bottom">
-          <p className="footer-meta">© 2025 Mellemrum</p>
-          <p>Aarhus, Danmark</p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import Footer from "../components/Footer";
 import { getEvents } from "../lib/supabase";
 
 export default function HomePage() {
@@ -120,7 +121,7 @@ export default function HomePage() {
           <section className="event-grid">
             {filteredEvents.map((event) => (
               <article className="event-card" key={event.id}>
-                <img src={event.image} alt="" />
+                <img src={event.image} alt={`Stemningsbillede for ${event.title}`} loading="lazy" />
                 <div className="event-card-content">
                   <p className="event-category">{event.category}</p>
                   <h3>{event.title}</h3>
@@ -138,31 +139,7 @@ export default function HomePage() {
           </section>
         )}
       </main>
-      <footer className="site-footer">
-        <div className="footer-top">
-          <div className="footer-intro">
-            <p className="footer-brand">
-              mellemrum<span>.</span>
-            </p>
-            <p>Udvalgte kulturoplevelser og nye perspektiver på Aarhus.</p>
-          </div>
-          <nav className="footer-links" aria-label="Footer">
-            <div className="footer-link-group">
-              <p className="footer-heading">Udforsk</p>
-              <Link to="/">Events</Link>
-              <Link to="/om">Om Mellemrum</Link>
-            </div>
-            <div className="footer-link-group">
-              <p className="footer-heading">For arrangører</p>
-              <a href="mailto:hej@mellemrum.dk">Kontakt os</a>
-            </div>
-          </nav>
-        </div>
-        <div className="footer-bottom">
-          <p className="footer-meta">© 2026 Mellemrum</p>
-          <p>Aarhus, Danmark</p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
