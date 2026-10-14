@@ -1,42 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import Footer from "../components/Footer";
-import { getEvents } from "../lib/supabase";
+import { getEvents } from "../data/events";
 
 const homeHeroImage = `${import.meta.env.BASE_URL}images/pages/home-hero.webp`;
 
 export default function HomePage() {
-  const [events, setEvents] = useState([]);
+  const events = getEvents();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Alle");
-  const [status, setStatus] = useState("loading");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    async function loadEvents() {
-      try {
-        const data = await getEvents();
-
-        if (!isCancelled) {
-          setEvents(data);
-          setStatus("ready");
-        }
-      } catch (error) {
-        if (!isCancelled) {
-          setErrorMessage(error.message);
-          setStatus("error");
-        }
-      }
-    }
-
-    loadEvents();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
 
   const categories = ["Alle", ...new Set(events.map((event) => event.category).filter(Boolean))];
 
@@ -111,25 +83,13 @@ export default function HomePage() {
           </label>
         </section>
 
-        {status === "loading" && (
-          <p className="message" role="status">
-            Henter events...
-          </p>
-        )}
-
-        {status === "error" && (
-          <p className="message error-message" role="alert">
-            Vi kunne ikke hente events lige nu. {errorMessage}
-          </p>
-        )}
-
-        {status === "ready" && filteredEvents.length === 0 && (
+        {filteredEvents.length === 0 && (
           <p className="message" role="status">
             Der er ingen events, der matcher din søgning.
           </p>
         )}
 
-        {status === "ready" && filteredEvents.length > 0 && (
+        {filteredEvents.length > 0 && (
           <section className="event-grid">
             {filteredEvents.map((event) => (
               <article className="event-card" key={event.id}>

@@ -1,60 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useParams } from "react-router";
 import Footer from "../components/Footer";
-import { createRegistration, getEventById } from "../lib/supabase";
+import { getEventById } from "../data/events";
+import { createRegistration } from "../lib/supabase";
 
 export default function EventPage() {
   const { eventId } = useParams();
   const location = useLocation();
   const navigationEvent = location.state?.event;
   const matchingNavigationEvent = String(navigationEvent?.id) === eventId ? navigationEvent : null;
-  const [event, setEvent] = useState(matchingNavigationEvent);
+  const event = matchingNavigationEvent ?? getEventById(eventId);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [pageStatus, setPageStatus] = useState(matchingNavigationEvent ? "ready" : "loading");
-  const [pageMessage, setPageMessage] = useState("");
   const [formStatus, setFormStatus] = useState("idle");
   const [formMessage, setFormMessage] = useState("");
   const formMessageId = "signup-message";
-
-  useEffect(() => {
-    let isCancelled = false;
-    const hasNavigationEvent = Boolean(matchingNavigationEvent);
-
-    async function loadEvent() {
-      if (hasNavigationEvent) {
-        setEvent(matchingNavigationEvent);
-        setPageStatus("ready");
-      } else {
-        setEvent(null);
-        setPageStatus("loading");
-      }
-
-      setPageMessage("");
-
-      try {
-        const data = await getEventById(eventId);
-
-        if (!isCancelled) {
-          setEvent(data);
-          setPageStatus(data ? "ready" : "not-found");
-        }
-      } catch (error) {
-        if (!isCancelled) {
-          if (!hasNavigationEvent) {
-            setPageMessage(error.message);
-            setPageStatus("error");
-          }
-        }
-      }
-    }
-
-    loadEvent();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [eventId, matchingNavigationEvent]);
 
   async function handleSubmit(eventSubmit) {
     eventSubmit.preventDefault();
@@ -93,40 +53,7 @@ export default function EventPage() {
     }
   }
 
-  if (pageStatus === "loading") {
-    return (
-      <>
-        <main className="event-page">
-          <Link className="back-link" to="/">
-            ← Alle events
-          </Link>
-          <p className="message" role="status">
-            Henter event...
-          </p>
-        </main>
-        <Footer />
-      </>
-    );
-  }
-
-  if (pageStatus === "error") {
-    return (
-      <>
-        <main className="event-page">
-          <Link className="back-link" to="/">
-            ← Alle events
-          </Link>
-          <section className="message error-message" role="alert">
-            <h1>Eventet kunne ikke hentes</h1>
-            <p>{pageMessage}</p>
-          </section>
-        </main>
-        <Footer />
-      </>
-    );
-  }
-
-  if (pageStatus === "not-found") {
+  if (!event) {
     return (
       <>
         <main className="event-page">
