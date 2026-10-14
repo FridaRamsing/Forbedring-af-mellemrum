@@ -3,6 +3,8 @@ import { Link } from "react-router";
 import Footer from "../components/Footer";
 import { getEvents } from "../lib/supabase";
 
+const homeHeroImage = `${import.meta.env.BASE_URL}images/pages/home-hero.webp`;
+
 export default function HomePage() {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
@@ -60,6 +62,16 @@ export default function HomePage() {
   return (
     <>
       <header className="hero">
+        <img
+          className="hero-image"
+          src={homeHeroImage}
+          alt=""
+          width="1800"
+          height="1200"
+          decoding="async"
+          fetchPriority="high"
+          aria-hidden="true"
+        />
         <p className="eyebrow">Kultur i Aarhus</p>
         <h1>Find plads til noget nyt.</h1>
         <p className="hero-copy">

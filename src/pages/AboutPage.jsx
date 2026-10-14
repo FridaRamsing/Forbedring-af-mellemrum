@@ -1,13 +1,16 @@
 import { Link } from "react-router";
 import Footer from "../components/Footer";
 
+const aboutHeroImage = `${import.meta.env.BASE_URL}images/pages/about-hero.webp`;
+const aboutCityImage = `${import.meta.env.BASE_URL}images/pages/about-city.webp`;
+
 export default function AboutPage() {
   return (
     <>
       <header className="page-header about-header">
         <img
           className="about-header-image"
-          src="https://images.unsplash.com/photo-1553376482-e96b68bd1e11?q=70&w=1400&auto=format&fit=crop&ixlib=rb-4.1.0"
+          src={aboutHeroImage}
           alt=""
           width="1400"
           height="933"
@@ -87,7 +90,7 @@ export default function AboutPage() {
         <section className="about-city" aria-labelledby="about-city-title">
           <figure>
             <img
-              src="https://images.unsplash.com/photo-1532370778713-1400f3d62094?q=70&w=1200&auto=format&fit=crop&ixlib=rb-4.1.0"
+              src={aboutCityImage}
               alt="Moderne arkitektur med lyse facader og turkise altaner"
               width="1200"
               height="800"
