@@ -5,6 +5,16 @@ export default function AboutPage() {
   return (
     <>
       <header className="page-header about-header">
+        <img
+          className="about-header-image"
+          src="https://images.unsplash.com/photo-1553376482-e96b68bd1e11?q=70&w=1400&auto=format&fit=crop&ixlib=rb-4.1.0"
+          alt=""
+          width="1400"
+          height="933"
+          decoding="async"
+          fetchPriority="high"
+          aria-hidden="true"
+        />
         <div className="about-header-content">
           <p className="eyebrow">Om Mellemrum</p>
           <h1>Vi skaber mellemrum i kalenderen.</h1>
@@ -77,10 +87,10 @@ export default function AboutPage() {
         <section className="about-city" aria-labelledby="about-city-title">
           <figure>
             <img
-              src="https://images.unsplash.com/photo-1532370778713-1400f3d62094?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.1.0"
+              src="https://images.unsplash.com/photo-1532370778713-1400f3d62094?q=70&w=1200&auto=format&fit=crop&ixlib=rb-4.1.0"
               alt="Moderne arkitektur med lyse facader og turkise altaner"
-              width="1600"
-              height="1067"
+              width="1200"
+              height="800"
               loading="lazy"
               decoding="async"
             />

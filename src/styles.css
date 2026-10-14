@@ -97,7 +97,7 @@ select {
 .hero {
   background:
     linear-gradient(90deg, rgba(12, 42, 34, 0.92) 0%, rgba(12, 42, 34, 0.7) 52%, rgba(12, 42, 34, 0.28) 100%),
-    url("https://images.unsplash.com/photo-1595146463222-19603449c6af?q=80&w=3872&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center / cover;
+    url("https://images.unsplash.com/photo-1595146463222-19603449c6af?q=70&w=1800&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center / cover;
   color: white;
   min-height: 64vh;
   padding: clamp(5rem, 10vw, 9rem) var(--content-edge) 5rem;
@@ -238,8 +238,8 @@ select:focus {
 }
 
 .event-card img {
-  aspect-ratio: 4 / 3;
   display: block;
+  height: clamp(11rem, 15vw, 15rem);
   object-fit: cover;
   width: 100%;
 }
@@ -334,12 +334,28 @@ select:focus {
 }
 
 .about-header {
-  background:
-    linear-gradient(90deg, rgba(12, 42, 34, 0.9) 0%, rgba(12, 42, 34, 0.58) 58%, rgba(12, 42, 34, 0.2) 100%),
-    url("https://images.unsplash.com/photo-1553376482-e96b68bd1e11?q=80&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0") center / cover;
-  min-height: 68vh;
-  display: flex;
   align-items: flex-end;
+  background: var(--green);
+  display: flex;
+  min-height: 68vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.about-header::after {
+  background: linear-gradient(90deg, rgba(12, 42, 34, 0.9) 0%, rgba(12, 42, 34, 0.58) 58%, rgba(12, 42, 34, 0.2) 100%);
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.about-header-image {
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+  width: 100%;
 }
 
 .page-header h1 {
@@ -348,6 +364,8 @@ select:focus {
 
 .about-header-content {
   max-width: 850px;
+  position: relative;
+  z-index: 1;
 }
 
 .about-header-content > p:last-child {
