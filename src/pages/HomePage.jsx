@@ -124,6 +124,8 @@ export default function HomePage() {
                 <img
                   src={event.image}
                   alt={`Stemningsbillede for ${event.title}`}
+                  width="800"
+                  height="600"
                   loading="lazy"
                   decoding="async"
                 />

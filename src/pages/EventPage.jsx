@@ -159,6 +159,8 @@ export default function EventPage() {
               <img
                 src={event.image}
                 alt={`Stemningsbillede for ${event.title}`}
+                width="1200"
+                height="900"
                 decoding="async"
                 fetchPriority="high"
                 loading="eager"
@@ -189,7 +191,7 @@ export default function EventPage() {
                   {event.venueWebsite && (
                     <>
                       <br />
-                      <a href={event.venueWebsite} target="_blank" rel="noreferrer">
+                      <a href={event.venueWebsite} target="_blank" rel="noopener noreferrer">
                         Besøg venue
                       </a>
                     </>
