@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 
 export default function Navbar() {
   return (
@@ -9,6 +9,11 @@ export default function Navbar() {
       <div className="nav-links">
         <NavLink to="/">Events</NavLink>
         <NavLink to="/om">Om Mellemrum</NavLink>
+      </div>
+      <div className="nav-actions">
+        <Link className="nav-cta" to="/?focus=events">
+          Find events
+        </Link>
       </div>
     </nav>
   );

@@ -17,8 +17,8 @@ export default function Footer() {
             <Link to="/om">Om Mellemrum</Link>
           </div>
           <div className="footer-link-group">
-            <p className="footer-heading">For arrangører</p>
-            <a href="mailto:hej@mellemrum.dk">Kontakt os</a>
+            <p className="footer-heading">Kontakt</p>
+            <a href="mailto:hej@mellemrum.dk">Skriv til os</a>
           </div>
         </nav>
       </div>
